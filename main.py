@@ -3,6 +3,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from db import Base, engine
 from catalog_db import ObjectVersion  # noqa: F401
+from ingestion_db import IngestionJob  # noqa: F401
 from zeus import router as zeus_router
 
 Base.metadata.create_all(bind=engine)
@@ -23,4 +24,4 @@ def root():
 
 @app.get("/health")
 def health():
-    return {"service": "UNG-ZEUS", "status": "ok"}
+    return {"service": "UNG-ZEUS", "status": "ok", "async_ingestion": "available"}
