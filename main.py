@@ -5,6 +5,7 @@ from db import Base, engine
 from catalog_db import ObjectVersion  # noqa: F401
 from ingestion_db import IngestionJob  # noqa: F401
 from zeus import router as zeus_router
+from pulsar_router import router as pulsar_router
 
 Base.metadata.create_all(bind=engine)
 app = FastAPI(title="UNG-ZEUS", description="Uganda National Grid National Data Storage Platform")
@@ -15,13 +16,12 @@ app.add_middleware(
     allow_headers=["*"],
 )
 app.include_router(zeus_router)
-
+app.include_router(pulsar_router)
 
 @app.get("/")
 def root():
     return {"service": "UNG-ZEUS", "status": "ok", "role": "National Data Storage Platform"}
 
-
 @app.get("/health")
 def health():
-    return {"service": "UNG-ZEUS", "status": "ok", "async_ingestion": "available"}
+    return {"service": "UNG-ZEUS", "status": "ok", "async_ingestion": "available", "pulsar_ingestion": "configured" if os.environ.get("PULSAR_SHARED_SECRET") else "awaiting-secret"}
